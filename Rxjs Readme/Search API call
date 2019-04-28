@@ -1,0 +1,60 @@
+Writing AN API which search data from a reddit source
+
+Thumbnails
+
+app.component.html
+
+we need some placeholders in the html to have this images
+
+<div *ngFor= "let result of results$ | async">
+    <div *ngIf="result.data.thumbnail != 'default' && result.data.thumbnail !=
+    'self'">
+      <a [href]="result.data.url">
+        <img [src]="result.data.thumbnail" alt="">
+      </a>
+    </div>
+	|async ->this allows us to send the observable straight to the dom element without
+	using subscribe to unwrap it.
+	async pipe will automatically sunscribe and unsubscribe when the user leaves the page
+	
+	ngFor - > it is looping through the results$ which is a observable
+	
+	ngIf -> it is checking whether the result is a thumnail, if yes
+	it is showing the thumbnail in the div\
+	
+app.comonent.ts
+
+we need a query api function to get the data from reddit
+queryAPI(searchString){
+    console.log('queryAPI',searchString);
+    return this.http.get(`https://www.reddit.com/r/aww/search.json?q=${searchString}`)
+    .pipe(map(result=>result['data']['children']));
+  }
+	
+	
+	we are using httpClient object and calling the get method and mapping the data
+	to the result
+	
+	
+	
+Next we need a observable results$  and a subject to the get the data from api.
+This time we dont need to subscribe to anything as we are using async pipe
+
+ ngOnInit() { 
+    this.results$ = this.searchSubject$
+      .pipe(debounceTime(200))
+      .pipe(distinctUntilChanged())
+      .pipe(tap(x => console.log('do', x)))
+      .pipe(switchMap(searchString => this.queryAPI(searchString)));
+
+  }
+  
+  we are using switchMap to wait for the user to search with the last string that 
+  he has typed
+  
+  distinctUntilChanged -> if the search string changes and it is similar to the last query
+  string this is going to make sure it does not search with it until the string is changed
+
+
+
+Tap-> we are using tap to log the search string 

@@ -1,0 +1,85 @@
+Why we need Subject
+Observable is the outer wrapper and observer 
+is the inner trigger. Each new Observable will contain its own observer
+And this observer cannot interact with each other
+
+You can subscribe to same observable more than once but 
+each subscription wil be a seperate instance and they wont interact with each other
+export class AppComponent {
+  title = 'rxjs';
+  
+  observable$;
+  ngOnInit(){
+    
+      this.observable$ = new Observable(subscriber => {
+      subscriber.next(1);
+      subscriber.next(2);
+      subscriber.next(3);
+      setTimeout(() => {
+        subscriber.next(4);
+        subscriber.complete();
+      }, 1000);
+    });
+    subscriber.next() // we cannot use the observer /subsriber outside the observable instance, 
+	//you need to use subject for that
+    console.log('just before subscribe');
+    this.observable$.subscribe(
+        value=>console.log(value),
+        err=>{},
+        ()=>console.log('this is the end')
+      );
+//});
+  }
+  ngOnDestroy(){
+    this.observable$.unsubsribe();
+  }
+  
+   
+}
+
+A Subject is both an observer and Observable at the same timeonce 
+
+Once you create an instance of a subject, you have access to next, subscribe,completem, error
+
+
+
+ngOnInit(){
+    
+      this.mySubject$ = new Subject();
+      this.mySubject$.subscribe(x=>console.log('first Subscribe', x));
+      this.mySubject$.next(1);
+      this.mySubject$.next(2);
+      this.mySubject$.complete();
+      this.mySubject$.subscribe(x=>console.log('second subscribe', x));
+      //this subscribe will give only 3 because with this subject, 
+      //we only gets notified of events after we have subscribed
+      //subjects are sharable but they are not reusable
+      //once you call error or complete on a subject its dead
+      //you cannot use it again, and if you try , it will silently ignore it
+      //not throw any error. so its better to unscribe to a subject when you 
+      //done with it, then it will throw error
+    
+      this.mySubject$.next(3);
+  }
+  
+ //Console Output
+first Subscribe 1
+app.component.ts:17 first Subscribe 2
+core.js:16829 Angular is running in the development mode. Call enableProdMode() to enable the production mode.
+
+no error
+
+
+but if you keep 
+this.mySubject$.unsubscribe(); it will let you know that the mySubject object cannot be used any more
+
+Console Output
+first Subscribe 1
+app.component.ts:17 first Subscribe 2
+AppComponent_Host.ngfactory.js? [sm]:1 ERROR ObjectUnsubscribedErrorImpl {message: "object unsubscribed", name: "ObjectUnsubscribedError", ngDebugContext: DebugContext_, ngErrorLogger: ƒ}
+View_AppComponent_Host_0 @ AppComponent_Host.ngfactory.js? [sm]:1
+proxyClass @ compiler.js:18239
+
+  
+  
+

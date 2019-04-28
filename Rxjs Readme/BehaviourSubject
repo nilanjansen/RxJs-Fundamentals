@@ -1,0 +1,51 @@
+Behavioural Subject
+
+What if we want to get the last value as soon as we subscribe to the subject
+
+In our example
+
+ this.mySubject$ = new Subject();
+      this.mySubject$.subscribe(x=>console.log('first Subscribe', x));
+      this.mySubject$.next(1);
+      this.mySubject$.next(2); //this is the last value
+      this.mySubject$.complete();
+      this.mySubject$.subscribe(x=>console.log('second subscribe', x));
+      this.mySubject$.next(3);
+	  
+	  
+import { Component } from '@angular/core';
+import { Observable, Subscriber } from 'rxjs';
+import { error } from '@angular/compiler/src/util';
+import { BehaviorSubject } from 'rxjs';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'rxjs';
+  
+  mySubject$;
+  ngOnInit(){
+    
+      this.mySubject$ = new BehaviorSubject(200); // Behaviour Subject need a starting value
+      this.mySubject$.subscribe(x=>console.log('first Subscribe', x));
+      this.mySubject$.next(1);
+      this.mySubject$.next(2);
+      this.mySubject$.subscribe(x=>console.log('second subscribe', x));
+      this.mySubject$.next(3);
+    
+  }
+  ngOnDestroy(){
+    this.mySubject$.unsubscribe(); 
+  }
+  
+   
+}
+//Console output
+first Subscribe 200
+app.component.ts:17 first Subscribe 1
+app.component.ts:17 first Subscribe 2
+app.component.ts:20 second subscribe 2
+app.component.ts:17 first Subscribe 3
+app.component.ts:20 second subscribe 3

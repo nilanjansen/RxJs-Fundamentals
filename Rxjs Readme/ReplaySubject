@@ -1,0 +1,31 @@
+What if you need to get all the values that is passed through the subject from the beginning
+
+A ReplaySubject Subject will save all the values and give them to the subscribers even after the ReplaySubject is completed
+
+export class AppComponent {
+  title = 'rxjs';
+  
+  mySubject$;
+  ngOnInit(){
+    
+      this.mySubject$ = new ReplaySubject(); // Behaviour Subject need a starting value
+      this.mySubject$.subscribe(x=>console.log('first Subscribe', x));
+      this.mySubject$.next(1);
+      this.mySubject$.next(2);
+      this.mySubject$.subscribe(x=>console.log('second subscribe', x));
+      this.mySubject$.next(3);
+    
+  }
+  ngOnDestroy(){
+    this.mySubject$.unsubscribe(); 
+  }
+  
+   
+}
+//console outputyoungHous21-239765
+first Subscribe 1
+app.component.ts:17 first Subscribe 2
+app.component.ts:20 second subscribe 1
+app.component.ts:20 second subscribe 2
+app.component.ts:17 first Subscribe 3
+app.component.ts:20 second subscribe 3

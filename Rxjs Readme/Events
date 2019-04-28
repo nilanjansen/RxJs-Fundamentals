@@ -1,0 +1,54 @@
+fromEvent
+
+how to subscribe to a button click event 
+
+get the fromEvent from rxJs
+
+use this simple code piece
+
+ngOnInit(){
+      
+      fromEvent(document,'click').subscribe(x=>console.log(x));
+  }
+  We are creating an Observable from a click event 
+  we are subscribing to the button click Observable using fromEvent
+  
+  Turn event into observable sequence.
+  
+ debounceTime
+ 
+ suppose in a search bar you expect to query the db without hitting database every time you 
+ type a letter
+ 
+ Discard emitted values that take less than the specified time between output
+  This operator is popular in scenarios such as type-ahead where the rate of user input must be controlled!
+  
+  export class AppComponent {
+  title = 'rxjs';
+  searchSubject$=new Subject<string>();
+ ngOnInit(){
+      
+     this.searchSubject$
+      .pipe(debounceTime(200))
+      .subscribe(x=>console.log('debounced: ',x));
+  }
+  ngOnDestroy(){
+    
+  }
+  inputChanged($event){
+    this.searchSubject$.next($event);
+    console.log('input changed',$event);
+  }
+  
+  console output
+  
+  
+  debounced:  asd
+app.component.ts:28 input changed asda
+app.component.ts:28 input changed asdas
+app.component.ts:28 input changed asdasd
+app.component.ts:21 debounced:  asdasd
+app.component.ts:28 input changed a
+app.component.ts:21 debounced:  a
+
+so finally the searchString would be ahead

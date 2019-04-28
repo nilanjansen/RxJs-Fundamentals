@@ -1,0 +1,39 @@
+    An observable is just an function, it just takes an   
+    observer.Observable provides us a lot of function
+    like create, subscribe.
+    Observer is an object, it has three methods
+    next, error, complete
+    the observer is what you will use to listen to 
+    button, searchbox, data stream events etc.
+    The observable is the outer container here,
+    thats what we are subscribing to here
+    the observer is the inner trigger that will fire off 
+    each time anything changes 
+    the observable carries it to all the subscribers
+    the observable listens even if you redirect to a new page
+    so you want to keep the subscribe open
+    For that you need to use Angular life cycle hooks
+    Change constructor into @ngOnInit and initialize the observable there
+	export class AppComponent{
+		title='app';
+		observable$;
+		ngOnInit(){
+			this.observable$ = Observable.create((observer)=>{
+			observer.next(1);
+			observer.next(2);
+			observer.next(3);
+			observer.complete();
+		});
+		this.observable$.subscribe(
+			value=>console.log(value),
+			err={},
+			()=>console.log('This is the end');	
+		}
+		ngOnDestroy(){
+			this.observable$.unsubscribe();
+		}
+	}
+	this life cycle hook will make sure that this AppComponent does not have any memory leaks
+	
+	
+	

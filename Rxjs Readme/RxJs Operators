@@ -1,0 +1,92 @@
+RxJs Operators
+
+Take
+
+works similarly to .net take
+
+ ngOnInit(){
+     
+      const source$ = interval(1000).pipe(take(5));
+      source$.subscribe(x=>console.log(x));
+          
+  }
+  
+  what this Operators
+  
+  Operators help us modify observables midstrem without modifying it
+  
+  What this piece of code is doing is getting the value from data stream interval, we are taking the 
+  first 5 value from it, and we are subscribing to that data source$
+  
+ 
+Map
+
+modify the data midstream
+
+ ngOnInit(){
+     
+      const source$ = interval(1000)
+          .pipe(take(5))
+          .pipe(map(x=>x*50))
+          .subscribe(x=>console.log(x));
+          
+  } 
+  
+  
+  
+ filter
+
+ Take only the values above a certain limit.Suppose you want to get values abouve 20 from the 
+above datastream
+
+ ngOnInit(){
+     
+      const source$ = interval(1000)
+          .pipe(take(5))
+          .pipe(map(x=>x*10))
+		  .pipe(filter(x=>x>20))
+          .subscribe(x=>console.log(x));
+          
+  }
+  
+  
+  MergeMap
+  
+  Map two data stream, apply logic and modify the data midstream
+  
+  ngOnInit(){
+      
+      const source$ = interval(1000);
+      const letters$ = of('a','b','c','d','e');
+      letters$.pipe(
+        mergeMap(x => 
+          source$
+          .pipe(take(5))
+          .pipe(map(i=>i+x)
+          ))
+          ).subscribe(x=>console.log(x));
+          
+  }
+  
+  SwitchMap
+  
+  Suppose you have a search bar. The use requests for a type, before db sends a response 
+  user changes the query string . Switchmap is a great operator is this instance.
+  It will cancel the old request and replace with a new one automatically
+  Switch map will trigger the subscribe once per each number but it will only give us the
+  most recent number when it fires rather than all the letters.
+  
+  ngOnInit(){
+      
+      const source$ = interval(1000);
+      const letters$ = of('a','b','c','d','e');
+      letters$.pipe(
+        switchMap(x => 
+           source$
+          .pipe(take(5))
+          .pipe(map(i=>i+x)
+          ))
+          ).subscribe(x=>console.log(x));
+          
+  }
+  
